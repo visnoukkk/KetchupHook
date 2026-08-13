@@ -1118,6 +1118,7 @@ end))
 local Templates = {
     Window = {
         Title = "KetchupHook",
+        GameName = "",
         AutoShow = false,
         Position = UDim2.fromOffset(175, 50),
         Size = UDim2.fromOffset(0, 0),
@@ -6218,12 +6219,12 @@ do
         Parent = Library.RightNotificationArea;
     })
 
-    -- Center notification area (default)
+    -- Center-bottom notification area (default)
     Library.CenterNotificationArea = Library:Create("Frame", {
-        AnchorPoint = Vector2.new(0.5, 0);
+        AnchorPoint = Vector2.new(0.5, 1);
         BackgroundTransparency = 1;
-        Position = UDim2.new(0.5, 0, 0, 40);
-        Size = UDim2.new(0, 300, 0, 200);
+        Position = UDim2.new(0.5, 0, 1, -14);
+        Size = UDim2.new(0, 300, 0, 400);
         ZIndex = 11000;
         Parent = ScreenGui;
     })
@@ -6232,6 +6233,7 @@ do
         Padding = UDim.new(0, 4);
         FillDirection = Enum.FillDirection.Vertical;
         HorizontalAlignment = Enum.HorizontalAlignment.Center;
+        VerticalAlignment = Enum.VerticalAlignment.Bottom;
         SortOrder = Enum.SortOrder.LayoutOrder;
         Parent = Library.CenterNotificationArea;
     })
@@ -6694,6 +6696,16 @@ function Library:CreateWindow(...)
             Window.Title = Title
             WindowLabel.Text = Title
         end
+    end
+
+    -- auto-populate from WindowInfo if provided
+    if typeof(WindowInfo.GameName) == "string" and WindowInfo.GameName ~= "" then
+        GameNameLabel.Text = WindowInfo.GameName
+    else
+        -- fallback: use the actual Roblox game name
+        pcall(function()
+            GameNameLabel.Text = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+        end)
     end
 
     function Window:SetGameName(Name)
